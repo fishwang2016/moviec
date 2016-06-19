@@ -34,7 +34,7 @@ rsplit =re.compile(ur'r/>([^img].+?)<b')
 rcn_name = re.compile(ur'.*译.*名.?|【译.*名】')
 ren_name = re.compile(ur".*原.*名.?|.*剧.*名|.*片.*名.?|：")
 ryear = re.compile(ur"年.*代.?|：")
-rcountry = re.compile(ur"国.*家.?|：")
+rcountry = re.compile(ur"^..?国.*家.?\u3000|：")
 rcategory = re.compile(ur"类.*型.?|类.*别.?|：")
 rlanguage = re.compile(ur"语.*言.?|：")
 rlan_script = re.compile(ur"字.*幕|：")
@@ -113,25 +113,16 @@ def get_detail(movie_content):
     actors =[]
 
   
-
-
-
-    i = 0
     for item in movie_content:
-        item = item
-        i += 1
+        item = item.decode("utf8")
+        
 
         if len(item) <= 70 :
-            print "begins %d" % i
-            print "item length: %d" % len(item)
-            print check_item(item,rcn_name)
 
             if  check_item(item,rcn_name):
 
                 cn_name = get_category(item,rcn_name)
-                print cn_name +" "+i
-                print "______________"
-
+  
                 continue
             elif check_item(item,ren_name):
 
@@ -184,9 +175,7 @@ def get_detail(movie_content):
             elif check_item(item,rspace):
                 actors.append(item.strip())
                 continue
-        else:
-
-        
+        elif not item.startswith("ftp"):
 
             if len(item) > 70 and not item.startswith('<img '):
                 description.append(item.strip())
@@ -216,16 +205,20 @@ def get_movie(url):
 
     response = requests.get(url)
     soup= BeautifulSoup(response.content,from_encoding ="GB18030")
-    temp = soup.find(id="Zoom")
-    zoom = temp.renderContents()
+    zoom = soup.find(id="Zoom")
 
-    movie_content = re.findall(ur'r/>([^img].+?)<b',zoom.decode("utf8"))  # get all the content between <br/>
+    #movie_content = re.findall(ur'r/>([^img].+?)<b',zoom.decode("utf8"))  # get all the content between <br/>
+
+    movie_content = zoom.find_all(text =re.compile(ur'.*'))
    
     (cn_name, en_name,country,year,category,language, lan_script,imdb_score,file_format,video_size,cd_numbers, video_length,director,description,actors)  = get_detail(movie_content) 
     # image lins
-    image_links = [item['src'] for item in temp.find_all("img")]
+    image_links = [item['src'] for item in zoom.find_all("img")]
     # download urls
-    download_urls =[item['href'] for item in temp.find_all("a")]
+    urls =[item['href'] for item in zoom.find_all("a")]
+
+    download_urls =[ url for url in urls if url.startswith("ftp")]
+
     # database handling
     query ='insert into dytt values (%s,%s,%s,%s,%s,%s,%s, %s,%s,%s,%s,  %s,%s,%s,%s, %s,%s,%s,%s)'
     #data = (url[0],cn_name, en_name,country,year,category,language,  lan_script,imdb_score,file_format,video_size, cd_numbers, video_length,director,description,actors,image_links,download_urls,url[1])
@@ -251,18 +244,18 @@ def get_movie(url):
     print u"片长： " , video_length
     print  u"导演： ",director.decode("utf8")
     print u"主演： "
-    # for actor in actors:
-    #     print actor
-    #     print "****"
-    # print u"简介： "
-    # for de in description:
-    #     print  de
-    # print u"下载链接： "
-    # for d in download_urls:
-    #     print d
-    # print u"图片链接： "
-    # for img in image_links:
-    #     print img
+    for actor in actors:
+        print actor
+        print "****"
+    print u"简介： "
+    for de in description:
+        print  de
+    print u"下载链接： "
+    for d in download_urls:
+        print d
+    print u"图片链接： "
+    for img in image_links:
+        print img
 
 
 
@@ -318,7 +311,7 @@ if  __name__ == "__main__":
     # print "finished all works!"
 
     # conn.close()
-    url ="http://www.dytt8.net/html/gndy/dyzz/20140901/46009.html"
+    url ="http://www.dytt8.net/html/gndy/dyzz/20130301/41553.html"
     get_movie(url)
 
 
