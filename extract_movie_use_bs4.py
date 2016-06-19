@@ -117,10 +117,6 @@ def get_detail(movie_content):
         if len(item) <= 70 :
 
             if  check_item(item,rcn_name):
-                
-                print "i %d" % i
-                print item
-                print "______"
 
                 cn_name = get_category(item,rcn_name)
   
@@ -208,7 +204,7 @@ def get_movie(url):
     description =[]
     actors =[]
 
-    response = requests.get(url)
+    response = requests.get(url[1])
     soup= BeautifulSoup(response.content,from_encoding ="GB18030")
     zoom = soup.find(id="Zoom")
 
@@ -226,98 +222,98 @@ def get_movie(url):
 
     # database handling
     query ='insert into dytt values (%s,%s,%s,%s,%s,%s,%s, %s,%s,%s,%s,  %s,%s,%s,%s, %s,%s,%s,%s)'
-    #data = (url[0],cn_name, en_name,country,year,category,language,  lan_script,imdb_score,file_format,video_size, cd_numbers, video_length,director,description,actors,image_links,download_urls,url[1])
+    data = (url[0],cn_name, en_name,country,year,category,language,  lan_script,imdb_score,file_format,video_size, cd_numbers, video_length,director,description,actors,image_links,download_urls,url[1])
 
-    #c.execute(query,data)
+    c.execute(query,data)
 
     #save to data base
-   # conn.commit()
+    conn.commit()
   
 
 
-    print u"中文： ",cn_name
-    print u"英文： ",en_name
-    print u"国家： ",country
-    print u"年代： ",year
-    print u"类别： ",category
-    print u"语言： ",language
-    print u"字幕： ",lan_script
-    print u"imdb： ",imdb_score
-    print u"文件格式： ",file_format
-    print u"视频尺寸： ",video_size
-    print u"文件大小： ",cd_numbers
-    print u"片长： " , video_length
-    print  u"导演： ",director.decode("utf8")
-    print u"主演： "
-    for actor in actors:
-        print actor
-        print "****"
-    print u"简介： "
-    for de in description:
-        print  de
-    print u"下载链接： "
-    for d in download_urls:
-        print d
-    print u"图片链接： "
-    for img in image_links:
-        print img
+    # print u"中文： ",cn_name
+    # print u"英文： ",en_name
+    # print u"国家： ",country
+    # print u"年代： ",year
+    # print u"类别： ",category
+    # print u"语言： ",language
+    # print u"字幕： ",lan_script
+    # print u"imdb： ",imdb_score
+    # print u"文件格式： ",file_format
+    # print u"视频尺寸： ",video_size
+    # print u"文件大小： ",cd_numbers
+    # print u"片长： " , video_length
+    # print  u"导演： ",director.decode("utf8")
+    # print u"主演： "
+    # for actor in actors:
+    #     print actor
+    #     print "****"
+    # print u"简介： "
+    # for de in description:
+    #     print  de
+    # print u"下载链接： "
+    # for d in download_urls:
+    #     print d
+    # print u"图片链接： "
+    # for img in image_links:
+    #     print img
 
 
 
 if  __name__ == "__main__":
 
-    # c.execute("select id,url from links where id >= 7161;")
-    # urls = c.fetchall()
-    # i = 0
+    c.execute("select id,url from links ;")
+    urls = c.fetchall()
+    i = 0
     print "begins "
-    # c.execute("""create table dytt (id text,cn_name text,
-    #       en_name text,
-    #       country text,
-    #       year text, 
-    #       category text ,
-    #       language text,
-    #       lan_script text,
-    #       imdb_score text,
-    #       file_format text,
-    #       video_size text,
-    #       cd_numbers text,
-    #       video_length text,
-    #       director text,
-    #       description text [],
-    #       actors text [],  
-    #       image_links text [],
-    #       download_urls text [],
-    #       url text 
+    c.execute("""create table dytt (id text,cn_name text,
+          en_name text,
+          country text,
+          year text, 
+          category text ,
+          language text,
+          lan_script text,
+          imdb_score text,
+          file_format text,
+          video_size text,
+          cd_numbers text,
+          video_length text,
+          director text,
+          description text [],
+          actors text [],  
+          image_links text [],
+          download_urls text [],
+          url text 
 
-    #     );""")
+        );""")
     
-    # links = sorted(urls, key= lambda x: x[0]) # sorted by key
-    # for url in links:
+    links = sorted(urls, key= lambda x: x[0]) # sorted by key
+    for url in links:
 
-    #     try:
+        try:
         
-    #         get_movie(url)
+            get_movie(url)
 
-    #         print "Done No. %d " % url[0]
+            print "Done No. %d " % url[0]
 
-    #     except Exception as e:
+        except Exception as e:
             
-    #         with open ("error_record.txt",'a') as f:
+            with open ("error_record.txt",'a') as f:
                 
-    #             f.write(str(url[0])+"|"+ url[1] + " | " )
-    #             f.write(e.message)
+                f.write(str(url[0])+"|"+ url[1] + " | " )
+                f.write(e.message)
 
-    #             f.close()
+                f.close()
 
-    #         print "error (%s ,%s)  " % (str(url[0]),url[1]) 
-    #         print e.message
+            print "error (%s ,%s)  " % (str(url[0]),url[1]) 
+            print e.message
 
 
-    # print "finished all works!"
+    print "finished all works!"
 
-    # conn.close()
-    url ="http://www.dytt8.net/html/gndy/jddy/20160520/51020.html"
-    get_movie(url)
+    conn.close()
+    # url ="http://www.dytt8.net/html/gndy/jddy/20160520/51020.html"
+    # get_movie(url)
 
 
 
