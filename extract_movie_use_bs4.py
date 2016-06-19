@@ -31,20 +31,20 @@ c = conn.cursor()
 # 正则表达式提取名字,中文需要前面加u
 rsplit =re.compile(ur'r/>([^img].+?)<b')
 
-rcn_name = re.compile(ur'.*译.*名.?|【译.*名】')
-ren_name = re.compile(ur".*原.*名.?|.*剧.*名|.*片.*名.?|：")
-ryear = re.compile(ur"年.*代.?|：")
-rcountry = re.compile(ur"^..?国.*家.?\u3000|：")
-rcategory = re.compile(ur"类.*型.?|类.*别.?|：")
-rlanguage = re.compile(ur"语.*言.?|：")
-rlan_script = re.compile(ur"字.*幕|：")
+rcn_name = re.compile(ur'.*译.*名.?(\u3000|\uff1a)|【译.*名】.?\uff1a')
+ren_name = re.compile(ur".*原.*名.?(\u3000|\uff1a)|.*剧.*名|.*片.*名.?")
+ryear = re.compile(ur"年.*代.?(\u3000|\uff1a)")
+rcountry = re.compile(ur"^..?国.*家.?(\u3000|\uff1a)")
+rcategory = re.compile(ur"类.*型.?(\u3000|\uff1a)|类.*别.?")
+rlanguage = re.compile(ur"语.*言.?(\u3000|\uff1a)")
+rlan_script = re.compile(ur"字.*幕.?(\u3000|\uff1a)")
 rimdb_score = re.compile(ur"(.*imdb..?)|：",re.IGNORECASE)
-rfile_format = re.compile(ur".*文件格式.?|：")
-rvideo_size = re.compile(ur".*视频尺寸.?|：")
-rcd_numbers = re.compile(ur".*文件大小.?|：")
-rvideo_length = re.compile(ur"片.*长.?|：")
-ractors = re.compile(ur"演.*员.?|主.*演.?|：")
-rdirector = re.compile(ur"导.*演.?|：")
+rfile_format = re.compile(ur".*文件格式.?(\u3000|\uff1a)")
+rvideo_size = re.compile(ur".*视频尺寸.?(\u3000|\uff1a)")
+rcd_numbers = re.compile(ur".*文件大小.?(\u3000|\uff1a)")
+rvideo_length = re.compile(ur"片.*长.?(\u3000|\uff1a)")
+ractors = re.compile(ur"演.*员.?(\u3000|\uff1a)|主.*演.?(\u3000|\uff1a)")
+rdirector = re.compile(ur"导.*演.?(\u3000|\uff1a)")
 
 rcn_name1 = re.compile(ur"译.*名")
 ren_name1 = re.compile(ur"片.*名")
@@ -64,9 +64,6 @@ rdirector1 = re.compile(ur"导.*演")
 
 
 rspace = re.compile(ur'^\u3000\u3000\u3000+')
-
-
-
 
 
 def strip_off(str):
@@ -111,20 +108,26 @@ def get_detail(movie_content):
     director=''
     description =[]
     actors =[]
-
+    i = 0
   
     for item in movie_content:
         item = item.decode("utf8")
-        
-
+        i +=1
+    
         if len(item) <= 70 :
 
             if  check_item(item,rcn_name):
+                
+                print "i %d" % i
+                print item
+                print "______"
 
                 cn_name = get_category(item,rcn_name)
   
                 continue
             elif check_item(item,ren_name):
+
+
 
                 en_name =  get_category(item,ren_name)
                 continue
@@ -144,11 +147,13 @@ def get_detail(movie_content):
                 continue
 
             elif check_item(item,rlan_script):
-                lan_script =  item.split()[-1]
+                lan_script =  get_category(item,rlan_script)
                 continue
 
             elif check_item(item,rimdb_score):
+             
                 imdb_score =  get_category(item,rimdb_score)
+
                 continue
 
             elif check_item(item,rfile_format):
@@ -311,7 +316,7 @@ if  __name__ == "__main__":
     # print "finished all works!"
 
     # conn.close()
-    url ="http://www.dytt8.net/html/gndy/dyzz/20130301/41553.html"
+    url ="http://www.dytt8.net/html/gndy/jddy/20160520/51020.html"
     get_movie(url)
 
 
