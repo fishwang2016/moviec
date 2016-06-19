@@ -1,0 +1,89 @@
+http://www.zhidaow.com/post/html-scraping
+
+http://python.jobbole.com/81346/
+
+re:
+http://blog.csdn.net/whycadi/article/details/2011046
+http://www.blogjava.net/Skynet/archive/2009/05/02/268628.html
+
+Good site for explaining crawler
+http://jakeaustwick.me/python-web-scraping-resource/
+
+
+xpath:
+
+http://ricostacruz.com/cheatsheets/xpath.html#axes
+
+print statement to file:
+
+
+
+python yourcode.py >> log.txt
+
+about encoding
+https://pymotw.com/2/codecs/
+
+postgresql
+
+https://www.postgresql.org/docs/8.3/static/server-start.html
+
+
+934
+down vote
+accepted
++50
+The Homebrew package manager includes launchctl plists to start automatically. For more information run brew info postgres.
+
+Start manually:
+
+pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+
+Stop manually:
+
+pg_ctl -D /usr/local/var/postgres stop -s -m fast
+
+What is the result of pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start?
+
+What is the result of pg_ctl -D /usr/local/var/postgres status?
+
+Are there any error messages in the server.log?
+
+Make sure tcp localhost connections are enabled in pg_hba.conf:
+
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            trust
+Check the listen_addresses and port in postgresql.conf:
+
+egrep 'listen|port' /usr/local/var/postgres/postgresql.conf
+
+#listen_addresses = 'localhost'     # what IP address(es) to listen on;
+#port = 5432                # (change requires restart)
+Cleaning up
+
+Postgres was most likely installed via Homebrew, Fink, MacPorts or the EnterpriseDB installer.
+
+Check the output of the following commands to determine which package manager it was installed with:
+
+brew && brew list|grep postgres
+fink && fink list|grep postgres
+port && port installed|grep postgresql
+
+
+
+http://againinput4.blog.163.com/blog/static/1727994912011111011432810/
+
+ 请注意 gb2312 不是 “gb2312”，凡 gb2312 的请换成 gb18030. 
+微软将 gb2312 和 gbk 映射为 gb18030，方便了一些人，也迷惑了一些人。
+
+   即，实际上该网页是GB18030的编码，所以按照这里：
+
+上午解决了网页解析乱码的问题
+
+http://blog.csdn.net/fanfan19881119/article/details/6789366
+
+（原始出处为：http://leeon.me/a/beautifulsoup-chinese-page-resolve）
+
+的方法，传递GB18030给fromEncoding，才可以：
+
+ page = urllib2.build_opener().open(req).read()
+soup = BeautifulSoup(page, fromEncoding="GB18030")
