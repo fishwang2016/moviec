@@ -116,13 +116,22 @@ def get_detail(movie_content):
 
 
 
-
+    i = 0
     for item in movie_content:
         item = item
+        i += 1
+
         if len(item) <= 70 :
+            print "begins %d" % i
+            print "item length: %d" % len(item)
+            print check_item(item,rcn_name)
+
             if  check_item(item,rcn_name):
 
                 cn_name = get_category(item,rcn_name)
+                print cn_name +" "+i
+                print "______________"
+
                 continue
             elif check_item(item,ren_name):
 
