@@ -216,9 +216,9 @@ def get_movie(url):
     # image lins
     image_links = [item['src'] for item in zoom.find_all("img")]
     # download urls
-    urls =[item['href'] for item in zoom.find_all("a")]
+    links =[item['href'] for item in zoom.find_all("a")]
 
-    download_urls =[ url for url in urls if url.startswith("ftp")]
+    download_urls =[ link for link in links if link.startswith("ftp")]
 
     # database handling
     query ='insert into dytt values (%s,%s,%s,%s,%s,%s,%s, %s,%s,%s,%s,  %s,%s,%s,%s, %s,%s,%s,%s)'
@@ -264,7 +264,6 @@ if  __name__ == "__main__":
 
     c.execute("select id,url from links ;")
     urls = c.fetchall()
-    i = 0
     print "begins "
     c.execute("""create table dytt (id text,cn_name text,
           en_name text,
